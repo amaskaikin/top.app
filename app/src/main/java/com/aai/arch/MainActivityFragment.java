@@ -7,7 +7,7 @@ import android.view.View;
 import android.view.ViewGroup;
 
 /**
- * A placeholder fragment containing a simple view.
+ * TODO: ALL
  */
 public class MainActivityFragment extends Fragment {
 

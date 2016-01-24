@@ -16,6 +16,12 @@
 
     <color name="indicator_unselected">#4D000000</color>
 
+    <color name="tab1">#c7575d</color>
+    <color name="tab2">#d2aa48</color>
+    <color name="tab3">#608daa</color>
+    <color name="tab4">#925eba</color>
+    <color name="tab5">#b4cb71</color>
+    <color name="tab6">#6fb4aa</color>
 
     <color name="blue_grey">#455A64</color>
     <color name="red">#F44336</color>

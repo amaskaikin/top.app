@@ -1,127 +1,156 @@
 package com.aai.arch;
 
-import android.graphics.Bitmap;
-import android.graphics.BitmapFactory;
+import android.annotation.TargetApi;
+import android.os.Build;
 import android.os.Bundle;
-import android.support.design.widget.AppBarLayout;
-import android.support.design.widget.CollapsingToolbarLayout;
-import android.support.design.widget.TabLayout;
+import android.support.v4.app.Fragment;
+import android.support.v4.app.FragmentStatePagerAdapter;
+import android.support.v4.widget.DrawerLayout;
+import android.support.v7.app.ActionBar;
+import android.support.v7.app.ActionBarDrawerToggle;
 import android.support.v7.app.AppCompatActivity;
-import android.support.v7.widget.GridLayoutManager;
-import android.support.v7.widget.RecyclerView;
 import android.support.v7.widget.Toolbar;
-import android.view.LayoutInflater;
-import android.view.View;
-import android.view.ViewGroup;
-import android.view.animation.AccelerateInterpolator;
-import android.view.animation.DecelerateInterpolator;
-import android.widget.Toast;
-import android.support.v7.graphics.Palette;
+import android.view.MenuItem;
+
+import com.github.florent37.materialviewpager.MaterialViewPager;
+import com.github.florent37.materialviewpager.header.HeaderDesign;
+
 
 public class MainActivity extends AppCompatActivity {
 
-    Toolbar toolbar;
-    CollapsingToolbarLayout collapsingToolbarLayout;
-    AppBarLayout appBarLayout;
+    private MaterialViewPager mViewPager;
+
+    private DrawerLayout mDrawer;
+    private ActionBarDrawerToggle mDrawerToggle;
+    private Toolbar toolbar;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
-        setupRecyclerView();
 
-        toolbar = (Toolbar) findViewById(R.id.htab_toolbar);
-        setSupportActionBar(toolbar);
-        getSupportActionBar().setTitle("Parallax Tabs");
-        getSupportActionBar().setDisplayHomeAsUpEnabled(true);
+        setTitle("");
 
+        mViewPager = (MaterialViewPager) findViewById(R.id.materialViewPager);
 
-        //TabLayout tabLayout = (TabLayout) findViewById(R.id.htab_tabs);
+        toolbar = mViewPager.getToolbar();
+        mDrawer = (DrawerLayout) findViewById(R.id.drawer_layout);
 
-        collapsingToolbarLayout = (CollapsingToolbarLayout) findViewById(R.id.htab_collapse_toolbar);
-        collapsingToolbarLayout.setTitleEnabled(false);
+        if (toolbar != null) {
+            setSupportActionBar(toolbar);
 
-        appBarLayout = (AppBarLayout) findViewById(R.id.htab_appbar);
-
-        Bitmap bitmap = BitmapFactory.decodeResource(getResources(),
-                R.drawable.header);
-
-        Palette.from(bitmap).generate(new Palette.PaletteAsyncListener() {
-            @SuppressWarnings("ResourceType")
-            @Override
-            public void onGenerated(Palette palette) {
-
-                int vibrantColor = palette.getVibrantColor(R.color.primary_500);
-                int vibrantDarkColor = palette.getDarkVibrantColor(R.color.primary_700);
-                collapsingToolbarLayout.setContentScrimColor(vibrantColor);
-                collapsingToolbarLayout.setStatusBarScrimColor(vibrantDarkColor);
+            final ActionBar actionBar = getSupportActionBar();
+            if (actionBar != null) {
+                actionBar.setDisplayHomeAsUpEnabled(true);
+                actionBar.setDisplayShowHomeEnabled(true);
+                actionBar.setDisplayShowTitleEnabled(true);
+                actionBar.setDisplayUseLogoEnabled(false);
+                actionBar.setHomeButtonEnabled(true);
+                actionBar.setTitle("Main");
             }
-        });
+        }
 
-        /*tabLayout.setOnTabSelectedListener(new TabLayout.OnTabSelectedListener() {
+        mDrawerToggle = new ActionBarDrawerToggle(this, mDrawer, 0, 0);
+        mDrawer.setDrawerListener(mDrawerToggle);
+
+        mViewPager.getViewPager().setAdapter(new FragmentStatePagerAdapter(getSupportFragmentManager()) {
+
             @Override
-            public void onTabSelected(TabLayout.Tab tab) {
+            public Fragment getItem(int position) {
+                switch (position % 6) {
+                    //case 0:
+                    //    return RecyclerViewFragment.newInstance();
+                    //case 1:
+                    //    return RecyclerViewFragment.newInstance();
+                    //case 2:
+                    //    return WebViewFragment.newInstance();
+                    default:
+                            return RecyclerViewFragment.newInstance();
+                }
+            }
 
-                switch (tab.getPosition()) {
+            @Override
+            public int getCount() {
+                return 6;
+            }
+
+            @Override
+            public CharSequence getPageTitle(int position) {
+                switch (position % 6) {
                     case 0:
-                        showToast("One");
-                        break;
+                        return "Selection";
                     case 1:
-                        showToast("Two");
-
-                        break;
+                        return "Actualités";
                     case 2:
-                        showToast("Three");
-
-                        break;
+                        return "Professionnel";
+                    case 3:
+                        return "Divertissement";
+                    case 4:
+                        return "Spanish";
+                    case 5:
+                        return "Top";
                 }
-            }
-
-            @Override
-            public void onTabUnselected(TabLayout.Tab tab) {
-            }
-
-            @Override
-            public void onTabReselected(TabLayout.Tab tab) {
-            }
-        });*/
-    }
-
-    private void setupRecyclerView() {
-        RecyclerView recyclerView = (RecyclerView) findViewById(R.id.recyclerview);
-
-        recyclerView.setLayoutManager(new GridLayoutManager(this, 1));
-        populateRecyclerView(recyclerView);
-    }
-
-
-    private void populateRecyclerView(RecyclerView recyclerView) {
-        recyclerView.setAdapter(new RecyclerView.Adapter() {
-
-            private final static int DUMMY_ITEM_COUNT = 30;
-
-            @Override
-            public RecyclerView.ViewHolder onCreateViewHolder(ViewGroup viewGroup, int position) {
-                View itemView = LayoutInflater.from(viewGroup.getContext()).inflate(R.layout.recyclerlist_item, viewGroup, false);
-                return new TextHolder(itemView);
-            }
-
-            @Override
-            public void onBindViewHolder(RecyclerView.ViewHolder viewHolder, int position) {
-                // We are too lazy for this by now ;-)
-            }
-
-            @Override
-            public int getItemCount() {
-                return DUMMY_ITEM_COUNT;
-            }
-
-            class TextHolder extends RecyclerView.ViewHolder {
-
-                public TextHolder(View itemView) {
-                    super(itemView);
-                }
+                return "";
             }
         });
+
+        mViewPager.setMaterialViewPagerListener(new MaterialViewPager.Listener() {
+            @TargetApi(Build.VERSION_CODES.LOLLIPOP)
+            @Override
+            public HeaderDesign getHeaderDesign(int page) {
+                switch (page) {
+                    case 0:
+                        return HeaderDesign.fromColorResAndDrawable(
+                                R.color.tab1,
+                                getResources().getDrawable(R.drawable.h1, null),
+                                getResources().getDrawable(R.drawable.l1, null));
+                    case 1:
+                        return HeaderDesign.fromColorResAndDrawable(
+                                R.color.tab2,
+                                getResources().getDrawable(R.drawable.h2, null),
+                                getResources().getDrawable(R.drawable.l2, null));
+                    case 2:
+                        return HeaderDesign.fromColorResAndDrawable(
+                                R.color.tab3,
+                                getResources().getDrawable(R.drawable.h3, null),
+                                getResources().getDrawable(R.drawable.l3, null));
+                    case 3:
+                        return HeaderDesign.fromColorResAndDrawable(
+                                R.color.tab4,
+                                getResources().getDrawable(R.drawable.h4, null),
+                                getResources().getDrawable(R.drawable.l4, null));
+                    case 4:
+                        return HeaderDesign.fromColorResAndDrawable(
+                                R.color.tab5,
+                                getResources().getDrawable(R.drawable.h5, null),
+                                getResources().getDrawable(R.drawable.l5, null));
+                    case 5:
+                        return HeaderDesign.fromColorResAndDrawable(
+                                R.color.tab6,
+                                getResources().getDrawable(R.drawable.h5, null),
+                                getResources().getDrawable(R.drawable.l5, null));
+                }
+
+                //execute others actions if needed (ex : modify your header logo)
+
+                return null;
+            }
+        });
+
+        mViewPager.getViewPager().setOffscreenPageLimit(mViewPager.getViewPager().getAdapter().getCount());
+        mViewPager.getPagerTitleStrip().setViewPager(mViewPager.getViewPager());
+
+    }
+
+    @Override
+    protected void onPostCreate(Bundle savedInstanceState) {
+        super.onPostCreate(savedInstanceState);
+        mDrawerToggle.syncState();
+    }
+
+    @Override
+    public boolean onOptionsItemSelected(MenuItem item) {
+        return mDrawerToggle.onOptionsItemSelected(item) ||
+                super.onOptionsItemSelected(item);
     }
 }

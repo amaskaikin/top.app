@@ -40,4 +40,12 @@
     <color name="amber">#FFC107</color>
     <color name="orange">#FF9800</color>
     <color name="deep_orange">#FF5722</color>
+
+    <color name="registrate">#6FB4AA</color>
+
+
+    <color name="material_drawer_selected_text">#262626</color>
+
+    <color name="material_drawer_dark_selected_text">#202020</color>
+    <color name="material_drawer_dark_selected">#202020</color>
 </resources>

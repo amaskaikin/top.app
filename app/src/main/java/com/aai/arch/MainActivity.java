@@ -1,28 +1,42 @@
 package com.aai.arch;
 
 import android.annotation.TargetApi;
+import android.app.Activity;
 import android.os.Build;
 import android.os.Bundle;
 import android.support.v4.app.Fragment;
 import android.support.v4.app.FragmentStatePagerAdapter;
+import android.support.v4.content.ContextCompat;
 import android.support.v4.widget.DrawerLayout;
 import android.support.v7.app.ActionBar;
 import android.support.v7.app.ActionBarDrawerToggle;
 import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.Toolbar;
 import android.view.MenuItem;
+import android.view.View;
+import android.view.inputmethod.InputMethodManager;
+
+import com.mikepenz.fontawesome_typeface_library.FontAwesome;
+import com.mikepenz.materialdrawer.DrawerBuilder;
+import com.mikepenz.materialdrawer.model.DividerDrawerItem;
+import com.mikepenz.materialdrawer.model.PrimaryDrawerItem;
+import com.mikepenz.materialdrawer.model.interfaces.IDrawerItem;
+import android.widget.Toast;
+
 
 import com.github.florent37.materialviewpager.MaterialViewPager;
 import com.github.florent37.materialviewpager.header.HeaderDesign;
+import com.mikepenz.materialdrawer.Drawer;
 
 
 public class MainActivity extends AppCompatActivity {
 
     private MaterialViewPager mViewPager;
 
-    private DrawerLayout mDrawer;
+   // private DrawerLayout mDrawer;
     private ActionBarDrawerToggle mDrawerToggle;
     private Toolbar toolbar;
+    private Drawer result;//= null;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -34,7 +48,62 @@ public class MainActivity extends AppCompatActivity {
         mViewPager = (MaterialViewPager) findViewById(R.id.materialViewPager);
 
         toolbar = mViewPager.getToolbar();
-        mDrawer = (DrawerLayout) findViewById(R.id.drawer_layout);
+      //  mDrawer = (DrawerLayout) findViewById(R.id.drawer_layout);
+
+        result = new DrawerBuilder()
+                .withActivity(this)
+                .withActionBarDrawerToggleAnimated(true)
+                .withActionBarDrawerToggle(true)
+                .withDisplayBelowStatusBar(false)
+                .withHeader(R.layout.drawer_header)
+                .addDrawerItems(
+                        new PrimaryDrawerItem()
+                                .withName(R.string.drawer_item_todos)
+
+                                .withIcon(FontAwesome.Icon.faw_list_ul)
+                                .withIdentifier(1),
+                        new PrimaryDrawerItem()
+                                .withName(R.string.drawer_item_register)
+                                .withIcon(FontAwesome.Icon.faw_user)
+                                .withIconColor(ContextCompat.getColor(this, R.color.registrate))
+
+                                .withTextColor(ContextCompat.getColor(this, R.color.registrate)),
+
+                        new PrimaryDrawerItem()
+                                .withName(R.string.drawer_item_conectate)
+                                .withIcon(FontAwesome.Icon.faw_lock)
+                                .withIdentifier(2),
+                        new DividerDrawerItem()
+
+                )
+                .withOnDrawerListener(new Drawer.OnDrawerListener() {
+                    @Override
+                    public void onDrawerOpened(View drawerView) {
+
+                        // Скрываем клавиатуру при открытии Navigation Drawer
+                        InputMethodManager inputMethodManager = (InputMethodManager) MainActivity.this.getSystemService(Activity.INPUT_METHOD_SERVICE);
+                        inputMethodManager.hideSoftInputFromWindow(MainActivity.this.getCurrentFocus().getWindowToken(), 0);
+
+
+                    }
+
+                    @Override
+                    public void onDrawerClosed(View drawerView) {
+                    }
+
+                    @Override
+                    public void onDrawerSlide(View drawerView, float slideOffset) {
+                    }
+                })
+                .withOnDrawerItemClickListener(new Drawer.OnDrawerItemClickListener() {
+                    @Override
+                    public boolean onItemClick(View view, int position, IDrawerItem drawerItem) {
+                       // showToast("OH!");
+                        return false;
+                    }
+                })
+                .build();
+
 
         if (toolbar != null) {
             setSupportActionBar(toolbar);
@@ -50,8 +119,8 @@ public class MainActivity extends AppCompatActivity {
             }
         }
 
-        mDrawerToggle = new ActionBarDrawerToggle(this, mDrawer, 0, 0);
-        mDrawer.setDrawerListener(mDrawerToggle);
+       // mDrawerToggle = new ActionBarDrawerToggle(this, mDrawer, 0, 0);
+       // mDrawer.setDrawerListener(mDrawerToggle);
 
         mViewPager.getViewPager().setAdapter(new FragmentStatePagerAdapter(getSupportFragmentManager()) {
 
@@ -145,12 +214,25 @@ public class MainActivity extends AppCompatActivity {
     @Override
     protected void onPostCreate(Bundle savedInstanceState) {
         super.onPostCreate(savedInstanceState);
-        mDrawerToggle.syncState();
+        //mDrawerToggle.syncState();
     }
 
-    @Override
+  /*  @Override
     public boolean onOptionsItemSelected(MenuItem item) {
         return mDrawerToggle.onOptionsItemSelected(item) ||
                 super.onOptionsItemSelected(item);
+    }*/
+
+    @Override
+    public boolean onOptionsItemSelected(MenuItem item) {
+        int id = item.getItemId();
+
+        if (id == android.R.id.home) {
+            // setupNavigationView(result);
+            result.openDrawer();
+
+        }
+
+        return super.onOptionsItemSelected(item);
     }
 }
